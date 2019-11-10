@@ -4,17 +4,23 @@ import Col from 'react-bootstrap/Col';
 import FormGroup from 'react-bootstrap/FormGroup';
 import FormControl from 'react-bootstrap/FormControl';
 import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
 
 let marked = require('marked');
+
+marked.setOptions({
+  breaks: true,
+  gfm: true
+})
 
 const placeholder =
 `## We could preview some markdown here. That could be cool.
 
 _WOW AHMAZING_
 
-<h1>This is an h1</h1>
-<h2>This is an h2</h2>
-<a href='#'>Not Zelda</a>
+# This is an h1
+## This is an h2
+[Not Zelda](#)
 
 \`code\`
 
@@ -28,18 +34,27 @@ const wow = 'heh';
 
 >  *Everything* is going according to **plan**.
 
-<img src='https://farm6.staticflickr.com/5599/15576500626_b56732d883_b.jpg' alt='Github Markdown Cheat Sheet'>
+![Github Markdown Cheat Sheet](https://farm6.staticflickr.com/5599/15576500626_b56732d883_b.jpg)
 
 **bold text here**
+
+carriage returns  
+whoo    
 `
 
 class Markdown extends Component {
   state = {
-    markdown: placeholder
+    markdown: placeholder,
+    theme: 'regular'
   }
 
   updateMarkdown(markdown) {
     this.setState({markdown})
+  }
+
+  changeTheme(theme) {
+    console.log(theme)
+    this.setState({theme})
   }
 
   render() {
@@ -55,14 +70,22 @@ class Markdown extends Component {
           <h1>
             Markdown Editor
             <Dropdown>
-              <Dropdown.Toggle variant="success" id="dropdown-basic">
-                Theme
-              </Dropdown.Toggle>
-
-              <Dropdown.Menu>
-                <Dropdown.Item href="#/action-1">Regular</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Dark</Dropdown.Item>
-              </Dropdown.Menu>
+              <DropdownButton
+                id='dropdown-basic-button'
+                title={this.state.theme}
+                onChange={this.changeTheme.bind(this)}
+              >
+                <Dropdown.Item 
+                  className={this.state.theme === 'regular' ? 'active' : ''}
+                >
+                  Regular
+                </Dropdown.Item>
+                <Dropdown.Item 
+                  className={this.state.theme === 'dark' ? 'active' : ''}
+                >
+                  Dark
+                </Dropdown.Item>
+              </DropdownButton>
             </Dropdown>
           </h1>
           <FormGroup>
@@ -72,7 +95,7 @@ class Markdown extends Component {
               onChange={
                 event => (this.updateMarkdown(event.target.value))
               }
-              rows='20'
+              rows='30'
               value={markdown}
             >
             </FormControl>
